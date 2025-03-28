@@ -5,12 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,91 +22,63 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
-                ImageSliderApp()
+                SlideListScreen()
             }
         }
     }
 }
 
 @Composable
-fun ImageSliderApp() {
-    val images = listOf(
-        Pair(R.drawable.numba1, "Number 1!"),
-        Pair(R.drawable.numba2, "Number 2!"),
-        Pair(R.drawable.numba3, "Number 3!"),
-        Pair(R.drawable.numba4, "Number 4!")
+fun SlideListScreen() {
+    val slideItems = listOf(
+        SlideItem(R.drawable.numba1, "Number 1!"),
+        SlideItem(R.drawable.numba2, "Number 2!"),
+        SlideItem(R.drawable.numba3, "Number 3!"),
+        SlideItem(R.drawable.numba4, "Number 4!"),
+        SlideItem(R.drawable.numba5, "Number 5!"),
+        SlideItem(R.drawable.numba6, "Number 6!"),
+        SlideItem(R.drawable.nummba7, "Number 7!"),
+        SlideItem(R.drawable.numba8, "Number 8!"),
+        SlideItem(R.drawable.numba9, "Number 9!"),
+        SlideItem(R.drawable.numba10, "Number 10!")
     )
 
-    var currentIndex by remember { mutableStateOf(0) }
-    var inputText by remember { mutableStateOf(TextFieldValue()) }
-
-    Column(
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(slideItems) { item ->
+            SlideCard(item)
+        }
+    }
+}
+
+@Composable
+fun SlideCard(item: SlideItem) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = images[currentIndex].first),
-            contentDescription = "Displayed Image",
-            modifier = Modifier.size(250.dp)
+            painter = painterResource(id = item.imageResId),
+            contentDescription = item.caption,
+            modifier = Modifier.size(150.dp)
         )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(
-            text = images[currentIndex].second,
-            fontSize = 20.sp,
-            modifier = Modifier.padding(8.dp)
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Row(
-            modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Button(onClick = { currentIndex = (currentIndex - 1 + images.size) % images.size }) {
-                Text("Back")
-            }
-            Spacer(modifier = Modifier.width(20.dp))
-            Button(onClick = { currentIndex = (currentIndex + 1) % images.size }) {
-                Text("Next")
-            }
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Row(
-            modifier = Modifier.padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            OutlinedTextField(
-                value = inputText,
-                onValueChange = { inputText = it },
-                label = { Text("Enter Slide #") },
-                modifier = Modifier.weight(1f)
-            )
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            Button(onClick = {
-                val index = inputText.text.toIntOrNull()
-                if (index != null && index in 1..images.size) {
-                    currentIndex = index - 1
-                }
-            }) {
-                Text("Go")
-            }
-        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(text = item.caption, fontSize = 16.sp)
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewImageSliderApp() {
+fun PreviewSlideListScreen() {
     MaterialTheme {
-        ImageSliderApp()
+        SlideListScreen()
     }
 }
